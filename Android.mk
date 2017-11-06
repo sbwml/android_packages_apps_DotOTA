@@ -33,7 +33,7 @@ LOCAL_AAPT_FLAGS := \
 	--extra-packages android.support.v7.cardview \
         --extra-packages android.support.v4
 
-LOCAL_PACKAGE_NAME := OTAUpdates
+LOCAL_PACKAGE_NAME := DotOTA
 
 LOCAL_MODULE_TAGS := optional
 
