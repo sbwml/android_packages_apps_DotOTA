@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:layout_marginStart="19dp"
+    android:elevation="100dp"
+    android:visibility="visible"
+    app:srcCompat="@drawable/ic_dotlogo">
+
+</ImageView>

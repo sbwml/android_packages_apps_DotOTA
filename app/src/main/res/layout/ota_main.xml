@@ -14,40 +14,77 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <Toolbar
-        android:id="@+id/toolbar_main"
+    <include
+        layout="@layout/card_update"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/Theme.RagnarDark" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp" />
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical" >
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_height="wrap_content">
 
-            <include layout="@layout/card_update" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <include layout="@layout/card_no_update" />
+                <include layout="@layout/card_dotmain" />
 
-            <include layout="@layout/card_addons" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingTop="6dp">
 
-            <include layout="@layout/card_website" />
+                    <include
+                        layout="@layout/card_rom_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-            <include layout="@layout/card_donate" />
+                    <include
+                        layout="@layout/card_no_update"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
 
-            <include layout="@layout/card_rom_info" />
-        </LinearLayout>
+                    <include
+                        layout="@layout/card_website"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <include
+                        layout="@layout/card_addons"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <include
+                        layout="@layout/card_donate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
     </ScrollView>
 
-</LinearLayout>
+</RelativeLayout>

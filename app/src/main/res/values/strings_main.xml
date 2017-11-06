@@ -57,6 +57,6 @@
     <string name="main_release_ignored">Release ignored</string>
 
     <!-- Downloading update notification title -->
-    <string name="notif_ota_downloading_title">Cosmic-OS OTA Update</string>
+    <string name="notif_ota_downloading_title">Droid Update</string>
 
 </resources>

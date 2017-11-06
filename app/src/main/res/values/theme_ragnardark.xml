@@ -16,7 +16,7 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
-    <style name="Theme.RagnarDark" parent="@android:Theme.Material">
+    <style name="Theme.RagnarDark" parent="Theme.AppCompat.Light.NoActionBar">
 
         <!-- Styleables -->
         <item name="noUpdateAvailable">@color/material_red_500</item>
@@ -50,8 +50,23 @@
     </style>
 
     <style name="Theme.RagnarDark.Settings" parent="Theme.RagnarDark">
+        <item name="android:colorPrimary">#ffffff</item>
+        <item name="android:colorPrimaryDark">#c2c2c2</item>
         <item name="android:windowNoTitle">false</item>
         <item name="android:windowActionBar">true</item>
     </style>
 
+    <style name="Theme.RagnarDark.Download" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorPrimary">#ffffff</item>
+        <item name="android:colorPrimaryDark">#c2c2c2</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <!-- Main theme colors -->
+        <item name="android:colorAccent">@color/accent_material_dark</item>
+        <item name="android:windowBackground">@drawable/material_background_dark</item>
+        <item name="cardBackground">@color/card_background_material_dark</item>
+        <item name="textColorPrimary">@color/primary_text_material_dark</item>
+        <item name="textColorSecondary">@color/secondary_text_material_dark</item>
+        <item name="cardStyle">@style/CardStyle.Dark</item>
+    </style>
 </resources>

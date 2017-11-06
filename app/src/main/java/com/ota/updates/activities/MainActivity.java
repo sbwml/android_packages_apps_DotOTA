@@ -17,6 +17,7 @@
 
 package com.ota.updates.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -27,9 +28,13 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.CardView;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -37,7 +42,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
 import com.ota.updates.R;
@@ -89,8 +97,8 @@ public class MainActivity extends Activity implements Constants{
         setContentView(R.layout.ota_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setActionBar(toolbar);
-        toolbar.setTitle(getResources().getString(R.string.app_name));
-
+        toolbar.setTitle(" ");
+        isStoragePermissionGranted();
         boolean firstRun = Preferences.getFirstRun(mContext);
         if(firstRun) {
             Preferences.setFirstRun(mContext, false);
@@ -111,7 +119,6 @@ public class MainActivity extends Activity implements Constants{
                 + INSTALL_AFTER_FLASH_DIR);
         if (!installAfterFlashDir.mkdirs()) Log.e(TAG,"Download directory creation failed");
 
-        createDialogs();
 
         // Check the correct build prop values are installed
         // Also executes the manifest/update check
@@ -141,7 +148,18 @@ public class MainActivity extends Activity implements Constants{
         updateRomInformation();
         updateRomUpdateLayouts();
         updateWebsiteLayout();
+
     }
+    public  boolean isStoragePermissionGranted() {
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            return false;
+        }
+    }
+
 
     @Override
     public void onStart() {
@@ -176,94 +194,17 @@ public class MainActivity extends Activity implements Constants{
             return false;
     }
 
-    private void createDialogs() {
-        // Compatibility Dialog
-        mCompatibilityDialog = new AlertDialog.Builder(mContext);
-        mCompatibilityDialog.setCancelable(false);
-        mCompatibilityDialog.setTitle(R.string.main_not_compatible_title);
-        mCompatibilityDialog.setMessage(R.string.main_not_compatible_message);
-        mCompatibilityDialog.setPositiveButton(R.string.ok, new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                MainActivity.this.finish();
-            }
-        });
-
-        // Donate Dialog
-        mDonateDialog = new AlertDialog.Builder(this);
-        String[] donateItems = { "PayPal" };
-        mDonateDialog.setTitle(getResources().getString(R.string.donate))
-        .setSingleChoiceItems(donateItems, 0, null)
-        .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String url;
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
-                if (selectedPosition == 0) {
-                    url = RomUpdate.getDonateLink(mContext);
-                    if (url != null){
-                        final Uri uri = Uri.parse(url);
-                        if (uri.getScheme() == null){
-                            url = "http://" + url;
-                        }
-                    } else {
-                        return;
-                    }
-                    intent.setData(Uri.parse(url));
-                }
-
-                try {
-                    startActivity(intent);
-                } catch(ActivityNotFoundException ex) {
-                    // Nothing to handle BitCoin payments. Send to Play Store
-                    if (DEBUGGING)
-                        Log.d(TAG, ex.getMessage());
-                    mPlayStoreDialog.show();
-                }
-            }
-        })
-        .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        mPlayStoreDialog = new AlertDialog.Builder(mContext);
-        mPlayStoreDialog.setCancelable(true);
-        mPlayStoreDialog.setTitle(R.string.main_playstore_title);
-        mPlayStoreDialog.setMessage(R.string.main_playstore_message);
-        mPlayStoreDialog.setPositiveButton(R.string.ok, new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                String url = "https://play.google.com/store/search?q=bitcoin%20wallet&c=apps";
-                intent.setData(Uri.parse(url));
-                startActivity(intent);
-            }
-        });
-        mPlayStoreDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-    }
 
     private void updateRomUpdateLayouts() {
-        View updateAvailable;
         View updateNotAvailable;
-        updateAvailable = findViewById(R.id.layout_main_update_available);
+        LinearLayout update;
+        LinearLayout no_update;
         updateNotAvailable = findViewById(R.id.layout_main_no_update_available);
-        updateAvailable.setVisibility(View.GONE);
+        update = (LinearLayout) findViewById(R.id.update);
+        no_update = (LinearLayout) findViewById(R.id.no_update);
         updateNotAvailable.setVisibility(View.GONE);
 
+        update.setVisibility(View.GONE);
         TextView updateAvailableSummary = (TextView) findViewById(R.id.main_tv_update_available_summary);
         TextView updateNotAvailableSummary = (TextView) findViewById(R.id.main_tv_no_update_available_summary);
 
@@ -273,7 +214,8 @@ public class MainActivity extends Activity implements Constants{
         // Update is available
         if (RomUpdate.getUpdateAvailability(mContext) ||
                 (!RomUpdate.getUpdateAvailability(mContext)) && Utils.isUpdateIgnored(mContext)) {
-            updateAvailable.setVisibility(View.VISIBLE);
+            update.setVisibility(View.VISIBLE);
+            no_update.setVisibility(View.GONE);
             TextView updateAvailableTitle = (TextView) findViewById(R.id.main_tv_update_available_title);
 
             if (Preferences.getDownloadFinished(mContext)) { //  Update already finished?
@@ -346,18 +288,30 @@ public class MainActivity extends Activity implements Constants{
 
         //ROM name
         TextView romName = (TextView) findViewById(R.id.tv_main_rom_name);
-        String romNameActual;
+        String romNameActual = null;
         try {
-            romNameActual =  Utils.getProp(OTA_ROMNAME).split("_")[1];
+            if (Utils.getProp("ro.dot.version").contains("v1.0")) {
+            romNameActual =  "DotOS v1.0";
+            }
+            else if (Utils.getProp("ro.dot.version").contains("v1.1")) {
+                romNameActual =  "DotOS v1.1";
+            }
+            else if (Utils.getProp("ro.dot.version").contains("v1.2")) {
+                romNameActual =  "DotOS v1.2";
+            }
+            if (Utils.getProp("ro.dot.version").contains("v2.0")) {
+                romNameActual =  "DotOS v2.0";
+            }
         }catch (IndexOutOfBoundsException exc){
-            romNameActual = Utils.getProp(OTA_ROMNAME);
+            romNameActual =  "Unknown";
         }
-        romName.setText(String.format(getString(R.string.main_rom_device), romNameActual));
+        String getDevice;
+        getDevice = Utils.getProp("ro.product.device");
+        romName.setText(String.format(getString(R.string.main_rom_device), getDevice));
 
         //ROM version
         TextView romVersion = (TextView) findViewById(R.id.tv_main_rom_version);
-        String romVersionActual = Utils.getProp(OTA_VERSION);
-        romVersion.setText(String.format(getString(R.string.main_rom_version), romVersionActual));
+        romVersion.setText(String.format(getString(R.string.main_rom_version), romNameActual));
 
         //ROM date
         TextView romDate = (TextView) findViewById(R.id.tv_main_rom_date);
@@ -469,14 +423,6 @@ public class MainActivity extends Activity implements Constants{
                 if (DEBUGGING)
                     Log.d(TAG, "Prop found");
                 new LoadUpdateManifest(mContext, true).execute();
-            } else {
-                if (DEBUGGING)
-                    Log.d(TAG, "Prop not found");
-                try {
-                    mCompatibilityDialog.show();
-                } catch(WindowManager.BadTokenException ex) {
-                    Log.e(TAG, ex.getMessage());
-                }
             }
             super.onPostExecute(result);
         }
