@@ -197,14 +197,11 @@ public class MainActivity extends Activity implements Constants{
 
     private void updateRomUpdateLayouts() {
         View updateNotAvailable;
-        LinearLayout update;
-        LinearLayout no_update;
+        FloatingActionButton down_fab;
+        down_fab = findViewById(R.id.layout_main_update_available);
         updateNotAvailable = findViewById(R.id.layout_main_no_update_available);
-        update = (LinearLayout) findViewById(R.id.update);
-        no_update = (LinearLayout) findViewById(R.id.no_update);
         updateNotAvailable.setVisibility(View.GONE);
-
-        update.setVisibility(View.GONE);
+        down_fab.setVisibility(View.GONE);
         TextView updateAvailableSummary = (TextView) findViewById(R.id.main_tv_update_available_summary);
         TextView updateNotAvailableSummary = (TextView) findViewById(R.id.main_tv_no_update_available_summary);
 
@@ -214,9 +211,13 @@ public class MainActivity extends Activity implements Constants{
         // Update is available
         if (RomUpdate.getUpdateAvailability(mContext) ||
                 (!RomUpdate.getUpdateAvailability(mContext)) && Utils.isUpdateIgnored(mContext)) {
-            update.setVisibility(View.VISIBLE);
-            no_update.setVisibility(View.GONE);
+            updateNotAvailable.setVisibility(View.GONE);
+            down_fab.setVisibility(View.VISIBLE);
             TextView updateAvailableTitle = (TextView) findViewById(R.id.main_tv_update_available_title);
+
+            if (Objects.equals(Utils.getProp("ro.dot.version"), RomUpdate.getVersionName(mContext))) {
+                down_fab.setVisibility(View.GONE);
+            }
 
             if (Preferences.getDownloadFinished(mContext)) { //  Update already finished?
                 updateAvailableTitle.setText(getResources().getString(R.string.main_update_finished));
@@ -235,7 +236,6 @@ public class MainActivity extends Activity implements Constants{
                         + "\n\n"
                         + getResources().getString(R.string.main_tap_to_download);
                 updateAvailableSummary.setText(updateSummary);
-
             }
         } else {
             updateNotAvailable.setVisibility(View.VISIBLE);
@@ -290,17 +290,17 @@ public class MainActivity extends Activity implements Constants{
         TextView romName = (TextView) findViewById(R.id.tv_main_rom_name);
         String romNameActual = null;
         try {
-            if (Utils.getProp("ro.dot.version").contains("v1.0")) {
+            if (Utils.getProp("ro.dot.display.version").contains("v1.0")) {
             romNameActual =  "DotOS v1.0";
             }
-            else if (Utils.getProp("ro.dot.version").contains("v1.1")) {
+            else if (Utils.getProp("ro.dot.display.version").contains("v1.1")) {
                 romNameActual =  "DotOS v1.1";
             }
-            else if (Utils.getProp("ro.dot.version").contains("v1.2")) {
+            else if (Utils.getProp("ro.dot.display.version").contains("v1.2")) {
                 romNameActual =  "DotOS v1.2";
             }
-            if (Utils.getProp("ro.dot.version").contains("v2.0")) {
-                romNameActual =  "DotOS v2.0";
+            if (Utils.getProp("ro.dot.display.version").contains("v1.3")) {
+                romNameActual =  "DotOS v1.3";
             }
         }catch (IndexOutOfBoundsException exc){
             romNameActual =  "Unknown";
