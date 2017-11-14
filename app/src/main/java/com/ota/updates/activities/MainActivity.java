@@ -60,6 +60,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects
 
 public class MainActivity extends Activity implements Constants{
 
@@ -197,8 +198,7 @@ public class MainActivity extends Activity implements Constants{
 
     private void updateRomUpdateLayouts() {
         View updateNotAvailable;
-        FloatingActionButton down_fab;
-        down_fab = findViewById(R.id.layout_main_update_available);
+        FloatingActionButton down_fab = (FloatingActionButton) findViewById(R.id.layout_main_update_available);
         updateNotAvailable = findViewById(R.id.layout_main_no_update_available);
         updateNotAvailable.setVisibility(View.GONE);
         down_fab.setVisibility(View.GONE);
@@ -288,30 +288,20 @@ public class MainActivity extends Activity implements Constants{
 
         //ROM name
         TextView romName = (TextView) findViewById(R.id.tv_main_rom_name);
-        String romNameActual = null;
-        try {
-            if (Utils.getProp("ro.dot.display.version").contains("v1.0")) {
-            romNameActual =  "DotOS v1.0";
-            }
-            else if (Utils.getProp("ro.dot.display.version").contains("v1.1")) {
-                romNameActual =  "DotOS v1.1";
-            }
-            else if (Utils.getProp("ro.dot.display.version").contains("v1.2")) {
-                romNameActual =  "DotOS v1.2";
-            }
-            if (Utils.getProp("ro.dot.display.version").contains("v1.3")) {
-                romNameActual =  "DotOS v1.3";
-            }
-        }catch (IndexOutOfBoundsException exc){
-            romNameActual =  "Unknown";
+        String romNameActual = Utils.getProp("ro.dot.build.version");
+        String OurRomName = "dotOS";
+        if (romNameActual == null) {
+            romNameActual = "Unknown";
+            OurRomName = "null";
         }
+        
         String getDevice;
         getDevice = Utils.getProp("ro.product.device");
         romName.setText(String.format(getString(R.string.main_rom_device), getDevice));
 
         //ROM version
         TextView romVersion = (TextView) findViewById(R.id.tv_main_rom_version);
-        romVersion.setText(String.format(getString(R.string.main_rom_version), romNameActual));
+        romVersion.setText(String.format(getString(R.string.main_rom_version), OurRomName + romNameActual));
 
         //ROM date
         TextView romDate = (TextView) findViewById(R.id.tv_main_rom_date);
