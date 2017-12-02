@@ -40,6 +40,22 @@
 
     <!-- Background update service -->
     <PreferenceCategory
+        android:key="settings_about"
+        android:title="@string/app_name">
+        <Preference
+            android:key="about_activity_pref"
+            android:summary="@string/about_preferences_summary"
+            android:title="@string/about_about_title" />
+        <ListPreference
+            android:defaultValue="1"
+            android:dialogTitle="OTA Channel"
+            android:entries="@array/ota_channel"
+            android:entryValues="@array/ota_channel_values"
+            android:key="select_ota_channel"
+            android:summary="Stable"
+            android:title="OTA Channel" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="updater_ors_screen_title"
         android:title="@string/notifications_title" >
         <SwitchPreference
@@ -97,13 +113,5 @@
     </PreferenceCategory>
 
     <!-- About -->
-    <PreferenceCategory
-        android:key="settings_about"
-        android:title="@string/app_name" >
-        <Preference
-            android:key="about_activity_pref"
-            android:summary="@string/about_preferences_summary"
-            android:title="@string/about_about_title" />
-    </PreferenceCategory>
 
 </PreferenceScreen>
