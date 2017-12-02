@@ -20,7 +20,7 @@
 
     <string name="main_update_available">Update Available!</string>
     <string name="main_update_finished">Download complete</string>
-    <string name="main_no_update_available">No Update Available</string>
+    <string name="main_no_update_available">You\'re up to date!</string>
     <string name="main_update_progress">Download Progress</string>
     <string name="main_website">Website</string>
     <string name="main_website_summary">Visit ROM website</string>
