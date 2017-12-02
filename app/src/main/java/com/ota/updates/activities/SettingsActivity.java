@@ -104,7 +104,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
         String storageLocationStr = SD_CARD + File.separator + OTA_DOWNLOAD_DIR;
         mStorageLocation.setSummary(storageLocationStr);
 
-        mOTAChannel = (ListPreference) findPreference(OTA_CHANNEL);
+        mOTAChannel = (ListPreference) findPreference("select_ota_channel");
         mOTAChannel.setOnPreferenceChangeListener(this);
     }
 
