@@ -21,11 +21,6 @@
     <!-- ATTENTION -->
     <!-- DO NOT TRANSLATE THE ITEMS MARKED "translatable="false" -->
 
-    <!-- App Strings -->
-    <string name="app_name" translatable="false">Dot Updates</string>
-    <string name="app_version" translatable="false">4.0.0</string>
-    <string name="changelog_url" translatable="false">https://raw.githubusercontent.com/MatthewBooth/OTAUpdates/stable/Changelog.md</string>
-
     <!-- Generic strings -->
     <string name="cancel">取消</string>
     <string name="ok">确定</string>
