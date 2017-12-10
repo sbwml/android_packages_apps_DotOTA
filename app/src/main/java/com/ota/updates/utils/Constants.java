@@ -27,7 +27,6 @@ public interface Constants {
     String OTA_ROMNAME                      = "persist.ota.romname";
     String OTA_VERSION                      = "persist.ota.version";
     String OTA_MANIFEST                     = "persist.ota.manifest";
-    String OTA_MANIFEST_DELTA               = "persist.delta_ota.manifest";
     String OTA_DOWNLOAD_LOC                 = "persist.ota.download_loc";
 
     // Storage
@@ -62,7 +61,6 @@ public interface Constants {
     String FIRST_RUN                        = "first_run";
     String ABOUT_ACTIVITY_PREF              = "about_activity_pref";
     String STORAGE_LOCATION                 = "updater_storage_location";
-    String OTA_CHANNEL                      = "select_ota_channel";
 
     // Broadcast intents
     String MANIFEST_LOADED                  = "com.ota.update.MANIFEST_LOADED";

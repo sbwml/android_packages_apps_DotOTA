@@ -61,7 +61,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
     private SparseBooleanArray mInstallPrefsItems = new SparseBooleanArray();
     private SwitchPreference mIgnoredRelease;
     private Preference mStorageLocation;
-    public ListPreference mOTAChannel;
 
     @SuppressLint("NewApi") @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,9 +102,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
         mStorageLocation.setSelectable(false);
         String storageLocationStr = SD_CARD + File.separator + OTA_DOWNLOAD_DIR;
         mStorageLocation.setSummary(storageLocationStr);
-
-        mOTAChannel = (ListPreference) findPreference("select_ota_channel");
-        mOTAChannel.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -162,14 +158,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                 }
                 setNotIgnore(true);
             }
-        } else if (preference == mOTAChannel) {
-            ListPreference ota_channel = (ListPreference) mOTAChannel;
-            ota_channel.setSummary(ota_channel.getEntry());
-            SharedPreferences prefs;
-            prefs = getSharedPreferences("ota_channel", MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt("ota_channel", Integer.parseInt(ota_channel.getValue()));
-            editor.commit();
         }
         return result;
     }

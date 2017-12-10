@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:background="@color/material_primary_dark"
             android:elevation="6dp"
             android:fitsSystemWindows="true"
             android:orientation="vertical">
@@ -25,7 +24,7 @@
             <ImageView
                 android:id="@+id/imageview"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:src="@drawable/ic_header" />
 

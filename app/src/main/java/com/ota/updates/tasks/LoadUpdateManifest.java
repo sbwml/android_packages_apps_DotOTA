@@ -20,10 +20,8 @@ package com.ota.updates.tasks;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 
 import com.ota.updates.R;
 import com.ota.updates.utils.Constants;
@@ -36,12 +34,10 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public  class LoadUpdateManifest extends AsyncTask<Void, Void, Void> implements Constants {
 
     public final String TAG = this.getClass().getSimpleName();
-    int id = 0;
+
     private Context mContext;
 
     private static final String MANIFEST = "update_manifest.xml";
@@ -76,24 +72,17 @@ public  class LoadUpdateManifest extends AsyncTask<Void, Void, Void> implements 
     protected Void doInBackground(Void... v) {
 
         try {
-            SharedPreferences prefs;
-            prefs = mContext.getSharedPreferences("ota_channel", MODE_PRIVATE);
-
-            id=prefs.getInt("last_val",0);
             InputStream input;
-            URL url = null;
-            if (id == 0) {
-                url = new URL(Utils.getProp(Constants.OTA_MANIFEST).trim());
-            } else if (id == 1) {
-                url = new URL(Utils.getProp(Constants.OTA_MANIFEST_DELTA).trim());
-            }
+
+            URL url;
+            url = new URL(Utils.getProp(Constants.OTA_MANIFEST).trim());
             URLConnection connection = url.openConnection();
             connection.connect();
             // download the file
             input = new BufferedInputStream(url.openStream());
 
             OutputStream output = mContext.openFileOutput(
-                    MANIFEST, MODE_PRIVATE);
+                    MANIFEST, Context.MODE_PRIVATE);
 
             byte data[] = new byte[1024];
             int count;

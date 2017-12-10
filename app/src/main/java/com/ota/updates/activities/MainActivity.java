@@ -50,8 +50,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import com.ota.updates.R;
 import com.ota.updates.RomUpdate;
 import com.ota.updates.tasks.Changelog;
@@ -59,7 +57,6 @@ import com.ota.updates.tasks.LoadUpdateManifest;
 import com.ota.updates.utils.Constants;
 import com.ota.updates.utils.Preferences;
 import com.ota.updates.utils.Utils;
-import com.ota.updates.activities.SettingsActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -220,18 +217,8 @@ public class MainActivity extends Activity implements Constants{
             down_fab.setVisibility(View.VISIBLE);
             TextView updateAvailableTitle = (TextView) findViewById(R.id.main_tv_update_available_title);
 
-	    SharedPreferences prefs;
-            prefs = getSharedPreferences("SettingsActivity", MODE_PRIVATE);
-
-	    int check = prefs.getInt("ota_channel", 0);
-            if (check == 1) {
-                if (Objects.equals(Utils.getProp("ro.delta.version"), RomUpdate.getVersionName(mContext))) {
+            if (Objects.equals(Utils.getProp("ro.dot.version"), RomUpdate.getVersionName(mContext))) {
                 down_fab.setVisibility(View.GONE);
-                }
-            else
-                if (Objects.equals(Utils.getProp("ro.dot.version"), RomUpdate.getVersionName(mContext))) {
-                    down_fab.setVisibility(View.GONE);
-                }
             }
 
             if (Preferences.getDownloadFinished(mContext)) { //  Update already finished?

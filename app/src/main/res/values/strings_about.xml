@@ -18,7 +18,7 @@
 <resources>
 
     <string name="about_about_title">About</string>
-    <string name="about_preferences_summary">DotOTA Information and Credits</string>
+    <string name="about_preferences_summary">DotOTA information, donation and credits</string>
     <string name="about_credits_title">Credits</string>
     <string name="about_credits_summary">Everyone who helped make this app!</string>
     <string name="about_version_title">Version</string>
