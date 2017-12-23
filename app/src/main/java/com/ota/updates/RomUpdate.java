@@ -53,7 +53,7 @@ public class RomUpdate implements Constants {
     }
 
     private static SharedPreferences getPrefs(Context context) {
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_WORLD_READABLE);
     }
 
     public static String getVersionName(Context context) {
