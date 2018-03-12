@@ -1,62 +1,64 @@
-#	Copyright (C) 2015 Matt Booth (Kryten2k35).
-#       Copyright (C) 2017 The halogenOS Project.
 #
-# 	Licensed under the Attribution-NonCommercial-ShareAlike 4.0 International
-# 	(the "License") you may not use this file except in compliance with the License.
-# 	You may obtain a copy of the License at
+# Copyright (C) 2018 dotOS
 #
-# 		http://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# 	Unless required by applicable law or agreed to in writing, software
-# 	distributed under the License is distributed on an "AS IS" BASIS,
-#	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#	See the License for the specific language governing permissions and
-#	limitations under the License.
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-LOCAL_PATH := $(call my-dir)
+LOCAL_PATH:= $(call my-dir)
+
+LOCAL_MODULE_TAGS := \
+	optional \
+	tests
+
+#Include res dir from libraries
+appcompat_dir := ../../../$(SUPPORT_LIBRARY_ROOT)/v7/appcompat/res
+cardview_dir := ../../../$(SUPPORT_LIBRARY_ROOT)/v7/cardview/res
+recyclerview_dir := ../../../$(SUPPORT_LIBRARY_ROOT)/v7/recyclerview/res
+design_dir := ../../../$(SUPPORT_LIBRARY_ROOT)/design/res
+preference_v7_dir := ../../../$(SUPPORT_LIBRARY_ROOT)/v7/preference/res
+preference_v14_dir := ../../../$(SUPPORT_LIBRARY_ROOT)/v14/preference/res
+
+res_dirs := res $(appcompat_dir) $(cardview_dir) $(recyclerview_dir) $(design_dir) $(preference_v7_dir) $(preference_v14_dir)
+
+
+##################################################
+# Build APK
 include $(CLEAR_VARS)
 
-ifndef TARGET_ARCH_ABI
-TARGET_ARCH_ABI := armeabi-v7a
-endif
-
-# Cardview Dir
-cardview_dir := $(LOCAL_PATH)/../../../frameworks/support/v7/cardview
-appcompat_dir := $(LOCAL_PATH)/../../../frameworks/support/v7/appcompat
-design_dir := $(LOCAL_PATH)/../../../frameworks/support/design
-
-LOCAL_MANIFEST_FILE := app/src/main/AndroidManifest.xml
-LOCAL_SRC_FILES := $(call all-java-files-under, app/src/main)
-LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/app/src/main/res
-LOCAL_RESOURCE_DIR += \
-	$(cardview_dir)/res \
-	$(appcompat_dir)/res \
-	$(design_dir)/res
-
-LOCAL_AAPT_FLAGS := \
-	--auto-add-overlay \
-	--extra-packages android.support.v7.cardview \
-        --extra-packages android.support.v4 \
-	--extra-packages android.support.v7.appcompat \
-	--extra-packages android.support.design
-
-LOCAL_PACKAGE_NAME := DotOTA
-
-LOCAL_MODULE_TAGS := optional
-
-LOCAL_STATIC_JAVA_LIBRARIES := \
-	android-support-v4 \
-	android-support-v7-cardview \
-	android-support-v7-appcompat \
-	android-support-design  
-
-LOCAL_JNI_SHARED_LIBRARIES := libbypass
-
+LOCAL_PACKAGE_NAME := SystemUpdates
 LOCAL_CERTIFICATE := platform
 LOCAL_PRIVILEGED_MODULE := true
 LOCAL_PROGUARD_ENABLED := disabled
+
+LOCAL_STATIC_JAVA_LIBRARIES := \
+    android-support-v4 \
+    android-support-v7-appcompat \
+    android-support-v7-recyclerview \
+    android-support-v7-cardview \
+    android-support-v7-preference \
+    android-support-v14-preference \
+    android-support-v13 \
+    android-support-design \
+    jsr305
+
+LOCAL_JAVA_LIBRARIES := org.apache.http.legacy
+
+LOCAL_SRC_FILES := $(call all-java-files-under, src)
+LOCAL_RESOURCE_DIR := $(addprefix $(LOCAL_PATH)/, $(res_dirs))
+LOCAL_AAPT_FLAGS := --auto-add-overlay
+LOCAL_AAPT_FLAGS += --extra-packages android.support.v7.appcompat:android.support.v7.cardview:android.support.v7.recyclerview:android.support.design:android.support.v7.preference:android.support.v14.preference:android.support.v17.preference
+
 include $(BUILD_PACKAGE)
 
 include $(CLEAR_VARS)
 
-include $(call all-makefiles-under,$(LOCAL_PATH))
+include $(BUILD_MULTI_PREBUILT)
