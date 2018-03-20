@@ -184,8 +184,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="298dp"
             android:text="Your System is up to date"
+            android:textAlignment="center"
             android:textSize="16sp" />
 
         <Button

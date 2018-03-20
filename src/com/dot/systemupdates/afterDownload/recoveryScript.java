@@ -29,7 +29,7 @@ public class recoveryScript extends AsyncTask<Void, String, Boolean> implements 
     private String mFilename;
     private String mScriptOutput;
     private String[] serverNodes;
-    private String Url = "https://raw.githubusercontent.com/Cosmic-OS/platform_vendor_ota/oreo-mr1/";
+    private String Url = "https://raw.githubusercontent.com/DotOS/services_apps_ota/dot-o/";
 
     public recoveryScript(Context context) {
         mContext = context;

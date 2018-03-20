@@ -2,7 +2,6 @@ package com.dot.systemupdates;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.job.JobInfo;
@@ -17,25 +16,20 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.Settings;
+import android.support.annotation.RequiresPermission;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresPermission;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatCallback;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.dot.systemupdates.afterDownload.prepareToFlash;
@@ -45,12 +39,18 @@ import com.dot.systemupdates.utils.SystemProperties;
 import com.dot.systemupdates.utils.xmlParser;
 import com.dot.systemupdates.views.ExpandableLayout;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import static com.dot.systemupdates.utils.Constants.INSTALL_AFTER_FLASH_DIR;
@@ -62,6 +62,7 @@ public class baseActivity extends AppCompatActivity {
     String[] serverNodes;
     DownloadManager downloadManager;
     String changelog;
+    boolean isOff;
     int intervals= 86400000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,13 +163,15 @@ public class baseActivity extends AppCompatActivity {
         FloatingActionButton updateCheck = findViewById(R.id.check_updates);
         Button changes = findViewById(R.id.v_changelog);
         downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        updateCheck();
-        updateCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateCheck();
-            }
-        });
+        if (isOfficial()) {
+            updateCheck();
+            updateCheck.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateCheck();
+                }
+            });
+        }
         changes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,13 +272,53 @@ public class baseActivity extends AppCompatActivity {
     }
 
     public void updateDisplayVersion() {
-        TextView dot_version = findViewById(R.id.dotOS_version);
-        if (SystemProperties.get("ro.dotOS.device").isEmpty()) {
-            dot_version.setText("dotOS Version : " + SystemProperties.get("ro.modversion") + "- NOT DOTOS ROM");
-        } else {
-            dot_version.setText("dotOS Version : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
-        }
+        final TextView dot_version = findViewById(R.id.dotOS_version);
+        final TextView up_to_date = findViewById(R.id.up_to_date);
+        final Button v_changelog = findViewById(R.id.v_changelog);
+        final FloatingActionButton check_updates = findViewById(R.id.check_updates);
+        new Thread(new Runnable() {
+            public void run() {
+                final List<String> txt = getTextFromWeb();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String device = SystemProperties.get("ro.build.product");
+                        String official = SystemProperties.get("ro.dot.releasetype");
+                        String txtR = device + " " + "userdebug";
+                        if (Objects.equals(official, "OFFICIAL") && txt.toString().contains(txtR)) {
+                            isOff = true;
+                        }
+                    }
+                });
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (SystemProperties.get("ro.dotOS.device").isEmpty()) {
+                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + "- NOT DOTOS ROM");
+                            up_to_date.setText("NOT DOTOS ROM");
+                            v_changelog.setVisibility(View.GONE);
+                            check_updates.setVisibility(View.GONE);
+                        }
+                        if (isOfficial()) {
+                            v_changelog.setVisibility(View.VISIBLE);
+                            check_updates.setVisibility(View.VISIBLE);
+                            up_to_date.setText("Your System is up to date");
+                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
+                        }
+                        else {
+                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion"));
+                            up_to_date.setText("UNOFFICIAL DEVICES/BUILDS NOT SUPPORTED");
+                            v_changelog.setVisibility(View.GONE);
+                            check_updates.setVisibility(View.GONE);
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
 
+    public boolean isOfficial() {
+        return isOff;
     }
 
     public void readChangelogFromSystem() {
@@ -307,5 +350,26 @@ public class baseActivity extends AppCompatActivity {
         final String[] units = new String[] { "B", "KB", "MB", "GB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+	
+    public List<String> getTextFromWeb() {
+        URLConnection feedUrl;
+        List<String> placeAddress = new ArrayList<>();
+        try {
+            feedUrl = new URL("https://raw.githubusercontent.com/DotOS/android_vendor_dot/dot-o/dot.devices").openConnection();
+            InputStream is = feedUrl.getInputStream();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                placeAddress.add(line);
+            }
+            is.close();
+            return placeAddress;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
