@@ -83,7 +83,7 @@
             </com.dot.systemupdates.views.ExpandableLayout>
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/go_back"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_alignParentStart="true"

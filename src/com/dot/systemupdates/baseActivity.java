@@ -158,7 +158,13 @@ public class baseActivity extends AppCompatActivity {
                 + File.separator
                 + INSTALL_AFTER_FLASH_DIR);
         if (!installAfterFlashDir.mkdirs()) Log.e("SystemUpdates","Download directory creation failed");
-
+        ImageButton go_back = findViewById(R.id.go_back);
+        go_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     public void getUpdateState() {
