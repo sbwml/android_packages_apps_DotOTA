@@ -14,6 +14,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.RequiresPermission;
@@ -237,7 +239,7 @@ public class baseActivity extends AppCompatActivity {
                                     public void onReceive(final Context context, Intent intent) {
                                         AlertDialog.Builder down_end = new AlertDialog.Builder(baseActivity.this);
                                         down_end.setTitle("Download Finished")
-                                                .setMessage("Do you want to start autoFlash or to update manually?")
+                                                .setMessage("Update manually or do you want to AutoFlash?")
                                                 .setCancelable(false)
                                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                     @Override
@@ -271,7 +273,7 @@ public class baseActivity extends AppCompatActivity {
         }
     }
 
-    public void updateDisplayVersion() {
+public void updateDisplayVersion() {
         final TextView dot_version = findViewById(R.id.dotOS_version);
         final TextView up_to_date = findViewById(R.id.up_to_date);
         final Button v_changelog = findViewById(R.id.v_changelog);
@@ -285,8 +287,10 @@ public class baseActivity extends AppCompatActivity {
                         String device = SystemProperties.get("ro.build.product");
                         String official = SystemProperties.get("ro.dot.releasetype");
                         String txtR = device + " " + "userdebug";
-                        if (Objects.equals(official, "OFFICIAL") && txt.toString().contains(txtR)) {
-                            isOff = true;
+                        if (isNetworkAvailable()) {
+                            if (Objects.equals(official, "OFFICIAL") && txt.toString().contains(txtR)) {
+                                isOff = true;
+                            }
                         }
                     }
                 });
@@ -305,9 +309,15 @@ public class baseActivity extends AppCompatActivity {
                             up_to_date.setText("Your System is up to date");
                             dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
                         }
+                        if (!isNetworkAvailable()) {
+                            v_changelog.setVisibility(View.VISIBLE);
+                            check_updates.setVisibility(View.VISIBLE);
+                            up_to_date.setText("Your System is up to date");
+                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
+                        }
                         else {
                             dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion"));
-                            up_to_date.setText("UNOFFICIAL DEVICES/BUILDS NOT SUPPORTED");
+                            up_to_date.setText("UNOFFICIAL Build/OTA Updates are not supported");
                             v_changelog.setVisibility(View.GONE);
                             check_updates.setVisibility(View.GONE);
                         }
@@ -317,6 +327,12 @@ public class baseActivity extends AppCompatActivity {
         }).start();
     }
 
+	private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+	
     public boolean isOfficial() {
         return isOff;
     }
