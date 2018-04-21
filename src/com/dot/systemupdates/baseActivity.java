@@ -321,7 +321,7 @@ public void updateDisplayVersion() {
                             up_to_date.setText("Your System is up to date");
                             dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
                         }
-                        else {
+                        if (!isOfficial()) {
                             dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion"));
                             up_to_date.setText("UNOFFICIAL Build/OTA Updates are not supported");
                             v_changelog.setVisibility(View.GONE);
