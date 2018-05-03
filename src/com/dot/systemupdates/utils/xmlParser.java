@@ -31,7 +31,7 @@ public class xmlParser extends AsyncTask<String, Integer, String[]> {
             Node node = nodeList.item(0);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
-                NodeList versionNL = element.getElementsByTagName("RomName").item(0).getChildNodes();
+                NodeList versionNL = element.getElementsByTagName("VersionName").item(0).getChildNodes();
                 Node versionNode = versionNL.item(0);
                 NodeList changelogNL = element.getElementsByTagName("Changelog").item(0).getChildNodes();
                 Node changelogNode = changelogNL.item(0);

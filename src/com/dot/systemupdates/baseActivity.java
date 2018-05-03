@@ -55,7 +55,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static com.dot.systemupdates.utils.Constants.INSTALL_AFTER_FLASH_DIR;
 import static com.dot.systemupdates.utils.Constants.OTA_DOWNLOAD_DIR;
 import static com.dot.systemupdates.utils.Constants.SD_CARD;
 
@@ -154,9 +153,7 @@ public class baseActivity extends AppCompatActivity {
         jobScheduler.schedule(new JobInfo.Builder(0,new ComponentName(this,updaterService.class)).setPeriodic(intervals).build());
         File installAfterFlashDir = new File(SD_CARD
                 + File.separator
-                + OTA_DOWNLOAD_DIR
-                + File.separator
-                + INSTALL_AFTER_FLASH_DIR);
+                + OTA_DOWNLOAD_DIR);
         if (!installAfterFlashDir.mkdirs()) Log.e("SystemUpdates","Download directory creation failed");
         ImageButton go_back = findViewById(R.id.go_back);
         go_back.setOnClickListener(new View.OnClickListener() {
@@ -212,6 +209,7 @@ public class baseActivity extends AppCompatActivity {
             xmlParser xmlParser = new xmlParser();
             serverNodes = xmlParser.execute(Url+device+".xml").get();
             new_version.setText(serverNodes[0]);
+		Log.d("jacob",(serverNodes[0]));
             String downloadCompleteIntentName = DownloadManager.ACTION_DOWNLOAD_COMPLETE;
             final IntentFilter downloadCompleteIntentFilter = new IntentFilter(downloadCompleteIntentName);
             if (!localVersion.equals(serverNodes[0]) && serverNodes[0] != null) {
@@ -238,7 +236,7 @@ public class baseActivity extends AppCompatActivity {
                                 request.setTitle("Downloading System Update");
                                 request.setDescription(serverNodes[0] + " is available to download");
                                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/DotUpdates/" + "/" + serverNodes[0] + "-" + device + ".zip");
+                                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, OTA_DOWNLOAD_DIR + "/" + serverNodes[0] + ".zip");
                                 downloadManager.enqueue(request);
                                 BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
                                     @Override
@@ -290,7 +288,7 @@ public void updateDisplayVersion() {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String device = SystemProperties.get("ro.build.product");
+                        String device = SystemProperties.get("ro.dotOS.device");
                         String official = SystemProperties.get("ro.dot.releasetype");
                         String txtR = device + " " + "userdebug";
                         if (isNetworkAvailable()) {
@@ -309,23 +307,24 @@ public void updateDisplayVersion() {
                             v_changelog.setVisibility(View.GONE);
                             check_updates.setVisibility(View.GONE);
                         }
-                        if (isOfficial()) {
-                            v_changelog.setVisibility(View.VISIBLE);
-                            check_updates.setVisibility(View.VISIBLE);
-                            up_to_date.setText("Your System is up to date");
-                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
-                        }
-                        if (!isNetworkAvailable()) {
-                            v_changelog.setVisibility(View.VISIBLE);
-                            check_updates.setVisibility(View.VISIBLE);
-                            up_to_date.setText("Your System is up to date");
-                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
-                        }
-                        if (!isOfficial()) {
-                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion"));
-                            up_to_date.setText("UNOFFICIAL Build/OTA Updates are not supported");
+                        if (isNetworkAvailable()) {
+	                        if (isOfficial()) {
+	                            v_changelog.setVisibility(View.VISIBLE);
+	                            check_updates.setVisibility(View.VISIBLE);
+	                            up_to_date.setText("Your System is up to date");
+	                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
+	                            getUpdateState();
+	                        } else {
+	                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion"));
+	                            up_to_date.setText("UNOFFICIAL Build/OTA Updates are not supported");
+	                            v_changelog.setVisibility(View.GONE);
+	                            check_updates.setVisibility(View.GONE);
+	                        }
+                        } else {
                             v_changelog.setVisibility(View.GONE);
                             check_updates.setVisibility(View.GONE);
+                            up_to_date.setText("No internet connection!");
+                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion") + " - " + SystemProperties.get("ro.dotOS.device"));
                         }
                     }
                 });

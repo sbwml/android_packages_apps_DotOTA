@@ -23,23 +23,16 @@ public interface Constants {
     // Developer
     boolean DEBUGGING                       = false;
 
-    // Props
-    String OTA_DOWNLOAD_LOC                 = "persist.ota.download_loc";
-
     // Settings
     String CURRENT_THEME                    = "current_theme";
     String LAST_CHECKED                     = "updater_last_update_check";
     String IS_DOWNLOAD_FINISHED             = "is_download_finished";
-    String DELETE_AFTER_INSTALL             = "delete_after_install";
-    String INSTALL_PREFS                    = "install_prefs";
-    String WIPE_DATA                        = "wipe_data";
-    String WIPE_CACHE                       = "wipe_cache";
-    String WIPE_DALVIK                      = "wipe_dalvik";
+    String WIPE_CACHE                       = "wipe cache";
+    String WIPE_DALVIK                      = "wipe dalvik";
 
     // Storage
-    String SD_CARD                          = Environment.getExternalStorageDirectory().getAbsolutePath();
-    String OTA_DOWNLOAD_DIR                 = Tools.doesPropExist(OTA_DOWNLOAD_LOC) ? Tools.getProp(OTA_DOWNLOAD_LOC) : "SystemUpdates";
-    String INSTALL_AFTER_FLASH_DIR          = "Extras";
+    String SD_CARD                          = "sdcard";
+    String OTA_DOWNLOAD_DIR                 = "";
 
     // Broadcast intents
     String MANIFEST_LOADED                  = "com.ota.update.MANIFEST_LOADED";
