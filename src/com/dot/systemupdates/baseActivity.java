@@ -59,7 +59,7 @@ import static com.dot.systemupdates.utils.Constants.OTA_DOWNLOAD_DIR;
 import static com.dot.systemupdates.utils.Constants.SD_CARD;
 
 public class baseActivity extends AppCompatActivity {
-    String Url = "https://raw.githubusercontent.com/DotOS/services_apps_ota/dot-o/";
+    String Url = "https://ota.sbwml.net/DotOS/";
     String[] serverNodes;
     DownloadManager downloadManager;
     String changelog;
@@ -168,7 +168,7 @@ public class baseActivity extends AppCompatActivity {
         FloatingActionButton updateCheck = findViewById(R.id.check_updates);
         Button changes = findViewById(R.id.v_changelog);
         downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        if (isOfficial()) {
+        if (isUNOFFICIAL()) {
             updateCheck();
             updateCheck.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -289,10 +289,10 @@ public void updateDisplayVersion() {
                     @Override
                     public void run() {
                         String device = SystemProperties.get("ro.dotOS.device");
-                        String official = SystemProperties.get("ro.dot.releasetype");
+                        String unofficial = SystemProperties.get("ro.dot.releasetype");
                         String txtR = device + " " + "userdebug";
                         if (isNetworkAvailable()) {
-                            if (Objects.equals(official, "OFFICIAL") && txt.toString().contains(txtR)) {
+                            if (Objects.equals(unofficial, "UNOFFICIAL") && txt.toString().contains(txtR)) {
                                 isOff = true;
                             }
                         }
@@ -308,7 +308,7 @@ public void updateDisplayVersion() {
                             check_updates.setVisibility(View.GONE);
                         }
                         if (isNetworkAvailable()) {
-	                        if (isOfficial()) {
+	                        if (isUNOFFICIAL()) {
 	                            v_changelog.setVisibility(View.VISIBLE);
 	                            check_updates.setVisibility(View.VISIBLE);
 	                            up_to_date.setText("Your System is up to date");
@@ -316,7 +316,7 @@ public void updateDisplayVersion() {
 	                            getUpdateState();
 	                        } else {
 	                            dot_version.setText("dotOS : " + SystemProperties.get("ro.modversion"));
-	                            up_to_date.setText("UNOFFICIAL Build/OTA Updates are not supported");
+	                            up_to_date.setText("OFFICIAL Build/OTA Updates are not supported");
 	                            v_changelog.setVisibility(View.GONE);
 	                            check_updates.setVisibility(View.GONE);
 	                        }
@@ -338,7 +338,7 @@ public void updateDisplayVersion() {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 	
-    public boolean isOfficial() {
+    public boolean isUNOFFICIAL() {
         return isOff;
     }
 
@@ -377,7 +377,7 @@ public void updateDisplayVersion() {
         URLConnection feedUrl;
         List<String> placeAddress = new ArrayList<>();
         try {
-            feedUrl = new URL("https://raw.githubusercontent.com/DotOS/android_vendor_dot/dot-o/dot.devices").openConnection();
+            feedUrl = new URL("https://ota.sbwml.net/DotOS/dot.devices").openConnection();
             InputStream is = feedUrl.getInputStream();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
