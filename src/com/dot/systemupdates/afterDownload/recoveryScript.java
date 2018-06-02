@@ -29,7 +29,7 @@ public class recoveryScript extends AsyncTask<Void, String, Boolean> implements 
     private String mFilename;
     private String mScriptOutput;
     private String[] serverNodes;
-    private String Url = "https://raw.githubusercontent.com/DotOS/services_apps_ota/dot-o/";
+    private String Url = "https://ota.sbwml.net/DotOS/";
 
     public recoveryScript(Context context) {
         mContext = context;
