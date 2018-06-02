@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 @SuppressLint("Registered")
 public class updaterService extends JobService {
     String[] serverNodes;
-    String Url = "https://raw.githubusercontent.com/DotOS/services_apps_ota/dot-o/";
+    String Url = "https://ota.sbwml.net/DotOS/";
     @Override
     public boolean onStartJob(JobParameters params) {
         try {
