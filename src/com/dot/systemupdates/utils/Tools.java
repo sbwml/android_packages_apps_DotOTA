@@ -79,7 +79,7 @@ public class Tools {
         URLConnection feedUrl;
         List<String> placeAddress = new ArrayList<>();
         try {
-            feedUrl = new URL("https://raw.githubusercontent.com/DotOS/android_vendor_dot/dot-o/dot.devices").openConnection();
+            feedUrl = new URL("https://ota.sbwml.net/DotOS/dot.devices").openConnection();
             InputStream is = feedUrl.getInputStream();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
